@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { useTheme } from '@react-navigation/native';
 import { IconSymbol } from './IconSymbol';
@@ -29,8 +29,10 @@ export default function IOSTabBar() {
     },
   ];
 
-  // Don't show tab bar on screens outside the tabs group
-  if (!pathname.startsWith('/(tabs)')) {
+  // Don't show tab bar on metric-detail or other non-tab screens
+  const isTabScreen = pathname.includes('/input') || pathname.includes('/history');
+  
+  if (!isTabScreen) {
     return null;
   }
 
@@ -46,7 +48,7 @@ export default function IOSTabBar() {
       ]}
     >
       {tabs.map((tab) => {
-        const isActive = pathname === tab.route || pathname.endsWith(`/${tab.name}`);
+        const isActive = pathname.includes(`/${tab.name}`);
         
         return (
           <TouchableOpacity
