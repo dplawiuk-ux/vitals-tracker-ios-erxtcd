@@ -93,6 +93,24 @@ export default function RootLayout() {
               {/* Main app with tabs */}
               <Stack.Screen name="(tabs)" />
 
+              {/* Info Screen */}
+              <Stack.Screen
+                name="info"
+                options={{
+                  presentation: 'card',
+                  animation: 'slide_from_right',
+                }}
+              />
+
+              {/* Loading Screen */}
+              <Stack.Screen
+                name="loading"
+                options={{
+                  presentation: 'card',
+                  animation: 'fade',
+                }}
+              />
+
               {/* Metric Detail Screen */}
               <Stack.Screen
                 name="metric-detail"

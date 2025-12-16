@@ -12,13 +12,16 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { saveHealthEntry } from '@/utils/storage';
 import { HealthEntry } from '@/types/HealthEntry';
 import { Toast } from '@/components/Toast';
+import { IconSymbol } from '@/components/IconSymbol';
 
 export default function InputScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [timestamp, setTimestamp] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -38,6 +41,11 @@ export default function InputScreen() {
     setToastMessage(message);
     setToastType(type);
     setToastVisible(true);
+  };
+
+  const handleInfoPress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push('/info');
   };
 
   const handleSave = async () => {
@@ -119,6 +127,21 @@ export default function InputScreen() {
         visible={toastVisible}
         onHide={() => setToastVisible(false)}
       />
+
+      <TouchableOpacity 
+        style={[
+          styles.infoButton,
+          { top: Platform.OS === 'android' ? 48 : 8 }
+        ]}
+        onPress={handleInfoPress}
+      >
+        <IconSymbol
+          ios_icon_name="info.circle"
+          android_material_icon_name="info"
+          size={28}
+          color={theme.colors.text}
+        />
+      </TouchableOpacity>
 
       <ScrollView
         style={styles.container}
@@ -316,6 +339,15 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
+  },
+  infoButton: {
+    position: 'absolute',
+    right: 20,
+    zIndex: 10,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,

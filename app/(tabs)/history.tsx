@@ -47,6 +47,11 @@ export default function HistoryScreen() {
     }, [])
   );
 
+  const handleInfoPress = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    router.push('/info');
+  };
+
   const formatDateTime = (date: Date): string => {
     return date.toLocaleString('en-US', {
       month: 'short',
@@ -143,6 +148,21 @@ export default function HistoryScreen() {
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
+      <TouchableOpacity 
+        style={[
+          styles.infoButton,
+          { top: Platform.OS === 'android' ? 48 : 8 }
+        ]}
+        onPress={handleInfoPress}
+      >
+        <IconSymbol
+          ios_icon_name="info.circle"
+          android_material_icon_name="info"
+          size={28}
+          color={theme.colors.text}
+        />
+      </TouchableOpacity>
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={[
@@ -204,6 +224,15 @@ const styles = StyleSheet.create({
   contentContainerWithTabBar: {
     paddingTop: Platform.OS === 'android' ? 48 : 0,
     paddingBottom: 100,
+  },
+  infoButton: {
+    position: 'absolute',
+    right: 20,
+    zIndex: 10,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,
