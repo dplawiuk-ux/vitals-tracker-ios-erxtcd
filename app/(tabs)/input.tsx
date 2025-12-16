@@ -155,7 +155,7 @@ export default function InputScreen() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.title, { color: theme.colors.text }]}>
-          Personal Vitals Tracker
+          Heart Tracker
         </Text>
 
         <View style={[styles.section, { backgroundColor: theme.dark ? '#1a1a1a' : '#f5f5f5' }]}>
