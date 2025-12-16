@@ -323,20 +323,21 @@ export default function MetricDetailScreen() {
       }));
 
       return (
-        <React.Fragment>
-          <LineChart
-            data={systolicData.reverse()}
-            label="Systolic Blood Pressure"
-            unit="mmHg"
-            color="#FF3B30"
-          />
-          <LineChart
-            data={diastolicData.reverse()}
-            label="Diastolic Blood Pressure"
-            unit="mmHg"
-            color="#007AFF"
-          />
-        </React.Fragment>
+        <LineChart
+          multiSeries={[
+            {
+              data: systolicData.reverse(),
+              label: 'Systolic',
+              color: '#FF3B30',
+            },
+            {
+              data: diastolicData.reverse(),
+              label: 'Diastolic',
+              color: '#007AFF',
+            },
+          ]}
+          unit="mmHg"
+        />
       );
     } else {
       const chartData = filteredEntries.map(entry => ({
