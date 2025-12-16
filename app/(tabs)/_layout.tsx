@@ -24,12 +24,27 @@ export default function TabLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: 'none',
+          animation: 'slide_from_right',
         }}
       >
-        <Stack.Screen key="input" name="input" />
-        <Stack.Screen key="history" name="history" />
-        <Stack.Screen key="metric-detail" name="metric-detail" />
+        <Stack.Screen 
+          name="input" 
+          options={{
+            animation: 'none',
+          }}
+        />
+        <Stack.Screen 
+          name="history" 
+          options={{
+            animation: 'none',
+          }}
+        />
+        <Stack.Screen 
+          name="metric-detail" 
+          options={{
+            animation: 'slide_from_right',
+          }}
+        />
       </Stack>
       <FloatingTabBar tabs={tabs} />
     </>

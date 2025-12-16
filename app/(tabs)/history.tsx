@@ -61,10 +61,8 @@ export default function HistoryScreen() {
     }
 
     const handlePress = () => {
-      router.push({
-        pathname: '/(tabs)/metric-detail',
-        params: { metric: metric.key },
-      });
+      console.log('Navigating to metric detail:', metric.key);
+      router.push(`/(tabs)/metric-detail?metric=${metric.key}`);
     };
 
     return (
@@ -121,7 +119,7 @@ export default function HistoryScreen() {
         style={styles.container}
         contentContainerStyle={[
           styles.contentContainer,
-          Platform.OS !== 'ios' && styles.contentContainerWithTabBar,
+          styles.contentContainerWithTabBar,
         ]}
       >
         <Text style={[styles.title, { color: theme.colors.text }]}>
@@ -168,7 +166,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   contentContainerWithTabBar: {
-    paddingTop: 48,
+    paddingTop: Platform.OS === 'android' ? 48 : 0,
     paddingBottom: 100,
   },
   title: {
