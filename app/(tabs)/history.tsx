@@ -62,7 +62,10 @@ export default function HistoryScreen() {
 
     const handlePress = () => {
       console.log('Navigating to metric detail:', metric.key);
-      router.push(`/(tabs)/metric-detail?metric=${metric.key}`);
+      router.push({
+        pathname: '/metric-detail',
+        params: { metric: metric.key }
+      });
     };
 
     return (

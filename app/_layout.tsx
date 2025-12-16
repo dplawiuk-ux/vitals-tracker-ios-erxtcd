@@ -1,3 +1,4 @@
+
 import "react-native-reanimated";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -87,6 +88,16 @@ export default function RootLayout() {
             <Stack>
               {/* Main app with tabs */}
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+              {/* Metric Detail Screen */}
+              <Stack.Screen
+                name="metric-detail"
+                options={{
+                  headerShown: false,
+                  presentation: 'card',
+                  animation: 'slide_from_right',
+                }}
+              />
 
               {/* Modal Demo Screens */}
               <Stack.Screen

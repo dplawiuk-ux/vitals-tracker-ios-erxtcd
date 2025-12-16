@@ -39,12 +39,6 @@ export default function TabLayout() {
             animation: 'none',
           }}
         />
-        <Stack.Screen 
-          name="metric-detail" 
-          options={{
-            animation: 'slide_from_right',
-          }}
-        />
       </Stack>
       <FloatingTabBar tabs={tabs} />
     </>

@@ -24,13 +24,6 @@ export default function TabLayout() {
             title: 'History',
           }}
         />
-        <Stack.Screen 
-          name="metric-detail" 
-          options={{
-            title: 'Metric Detail',
-            presentation: 'card',
-          }}
-        />
       </Stack>
       <IOSTabBar />
     </>

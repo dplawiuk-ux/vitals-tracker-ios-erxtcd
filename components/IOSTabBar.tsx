@@ -29,8 +29,8 @@ export default function IOSTabBar() {
     },
   ];
 
-  // Don't show tab bar on metric-detail screen
-  if (pathname.includes('metric-detail')) {
+  // Don't show tab bar on screens outside the tabs group
+  if (!pathname.startsWith('/(tabs)')) {
     return null;
   }
 
