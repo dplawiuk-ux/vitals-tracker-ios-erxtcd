@@ -18,7 +18,6 @@ import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getHealthEntries, getLatestMetricValue } from '@/utils/storage';
 import { HealthEntry } from '@/types/HealthEntry';
 import { METRICS } from '@/constants/metrics';
-import { calculateStatistics, getTrendIcon, getTrendColor } from '@/utils/statistics';
 
 export default function HistoryScreen() {
   const theme = useTheme();
@@ -60,7 +59,6 @@ export default function HistoryScreen() {
 
   const renderMetricCard = (metric: typeof METRICS[0]) => {
     let latestValue = null;
-    let stats = null;
     
     if (metric.key === 'bloodPressure') {
       const systolic = getLatestMetricValue(entries, 'systolicBP');
@@ -71,11 +69,9 @@ export default function HistoryScreen() {
           value: `${systolic.value}/${diastolic.value}`,
           timestamp: systolic.timestamp,
         };
-        stats = calculateStatistics(entries, 'systolicBP');
       }
     } else {
       latestValue = getLatestMetricValue(entries, metric.key as keyof HealthEntry);
-      stats = calculateStatistics(entries, metric.key as keyof HealthEntry);
     }
 
     const handlePress = async () => {
@@ -107,16 +103,9 @@ export default function HistoryScreen() {
 
         {latestValue ? (
           <View style={styles.metricContent}>
-            <View style={styles.valueContainer}>
-              <Text style={[styles.metricValue, { color: theme.colors.text }]}>
-                {latestValue.value} {metric.unit}
-              </Text>
-              {stats && (
-                <Text style={[styles.trendIndicator, { color: getTrendColor(stats.trend) }]}>
-                  {getTrendIcon(stats.trend)}
-                </Text>
-              )}
-            </View>
+            <Text style={[styles.metricValue, { color: theme.colors.text }]}>
+              {latestValue.value} {metric.unit}
+            </Text>
             <Text style={[styles.metricTimestamp, { color: theme.dark ? '#999' : '#666' }]}>
               {formatDateTime(latestValue.timestamp)}
             </Text>
@@ -249,18 +238,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginRight: 8,
   },
-  valueContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
   metricValue: {
     fontSize: 18,
     fontWeight: '600',
-  },
-  trendIndicator: {
-    fontSize: 20,
-    fontWeight: 'bold',
   },
   metricTimestamp: {
     fontSize: 12,
