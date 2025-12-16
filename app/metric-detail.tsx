@@ -29,7 +29,6 @@ import {
   exportBloodPressureToCSV,
   exportWeightToCSV,
   exportSpO2ToCSV,
-  formatDateTime,
 } from '@/utils/csvExport';
 
 export default function MetricDetailScreen() {
@@ -83,6 +82,15 @@ export default function MetricDetailScreen() {
       loadEntries();
     }, [metricKey])
   );
+
+  const formatDateTime = (date: Date): string => {
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   const handleExport = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
