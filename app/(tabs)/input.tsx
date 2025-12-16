@@ -8,13 +8,14 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
-  Alert,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 import { saveHealthEntry } from '@/utils/storage';
 import { HealthEntry } from '@/types/HealthEntry';
+import { Toast } from '@/components/Toast';
 
 export default function InputScreen() {
   const theme = useTheme();
@@ -29,7 +30,19 @@ export default function InputScreen() {
   const [weight, setWeight] = useState('');
   const [spo2, setSpo2] = useState('');
 
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  };
+
   const handleSave = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     const entry: HealthEntry = {
       id: Date.now().toString(),
       timestamp,
@@ -43,7 +56,8 @@ export default function InputScreen() {
     const hasData = entry.heartRate || entry.systolicBP || entry.diastolicBP || entry.weight || entry.spo2;
     
     if (!hasData) {
-      Alert.alert('No Data', 'Please enter at least one metric value.');
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      showToast('Please enter at least one metric value', 'error');
       return;
     }
 
@@ -57,10 +71,12 @@ export default function InputScreen() {
       setSpo2('');
       setTimestamp(new Date());
       
-      Alert.alert('Success', 'Health entry saved successfully!');
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      showToast('Health entry saved successfully!', 'success');
       console.log('Entry saved:', entry);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save health entry. Please try again.');
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      showToast('Failed to save health entry', 'error');
       console.error('Save error:', error);
     }
   };
@@ -68,6 +84,7 @@ export default function InputScreen() {
   const onDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
     if (selectedDate) {
+      Haptics.selectionAsync();
       const newTimestamp = new Date(timestamp);
       newTimestamp.setFullYear(selectedDate.getFullYear());
       newTimestamp.setMonth(selectedDate.getMonth());
@@ -79,6 +96,7 @@ export default function InputScreen() {
   const onTimeChange = (event: any, selectedTime?: Date) => {
     setShowTimePicker(false);
     if (selectedTime) {
+      Haptics.selectionAsync();
       const newTimestamp = new Date(timestamp);
       newTimestamp.setHours(selectedTime.getHours());
       newTimestamp.setMinutes(selectedTime.getMinutes());
@@ -86,9 +104,6 @@ export default function InputScreen() {
     }
   };
 
-  // Calculate bottom padding to account for tab bar
-  // iOS native tabs: ~50px + safe area
-  // Android floating tab bar: ~80px + margin
   const bottomPadding = Platform.OS === 'ios' 
     ? 50 + insets.bottom 
     : 120;
@@ -98,6 +113,13 @@ export default function InputScreen() {
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
       edges={['top']}
     >
+      <Toast
+        message={toastMessage}
+        type={toastType}
+        visible={toastVisible}
+        onHide={() => setToastVisible(false)}
+      />
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={[
@@ -121,7 +143,10 @@ export default function InputScreen() {
           <View style={styles.dateTimeContainer}>
             <TouchableOpacity
               style={[styles.dateTimeButton, { backgroundColor: theme.dark ? '#2a2a2a' : '#fff' }]}
-              onPress={() => setShowDatePicker(true)}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setShowDatePicker(true);
+              }}
             >
               <Text style={[styles.dateTimeText, { color: theme.colors.text }]}>
                 {timestamp.toLocaleDateString()}
@@ -130,7 +155,10 @@ export default function InputScreen() {
             
             <TouchableOpacity
               style={[styles.dateTimeButton, { backgroundColor: theme.dark ? '#2a2a2a' : '#fff' }]}
-              onPress={() => setShowTimePicker(true)}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setShowTimePicker(true);
+              }}
             >
               <Text style={[styles.dateTimeText, { color: theme.colors.text }]}>
                 {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

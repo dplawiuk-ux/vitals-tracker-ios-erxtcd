@@ -7,28 +7,43 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@react-navigation/native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '@/components/IconSymbol';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { getHealthEntries, getLatestMetricValue } from '@/utils/storage';
 import { HealthEntry } from '@/types/HealthEntry';
 import { METRICS } from '@/constants/metrics';
+import { calculateStatistics, getTrendIcon, getTrendColor } from '@/utils/statistics';
 
 export default function HistoryScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [entries, setEntries] = useState<HealthEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadEntries = async () => {
     const data = await getHealthEntries();
     setEntries(data);
+    setLoading(false);
     console.log('Loaded entries:', data.length);
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await loadEntries();
+    setRefreshing(false);
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
+      setLoading(true);
       loadEntries();
     }, [])
   );
@@ -45,6 +60,7 @@ export default function HistoryScreen() {
 
   const renderMetricCard = (metric: typeof METRICS[0]) => {
     let latestValue = null;
+    let stats = null;
     
     if (metric.key === 'bloodPressure') {
       const systolic = getLatestMetricValue(entries, 'systolicBP');
@@ -55,12 +71,15 @@ export default function HistoryScreen() {
           value: `${systolic.value}/${diastolic.value}`,
           timestamp: systolic.timestamp,
         };
+        stats = calculateStatistics(entries, 'systolicBP');
       }
     } else {
       latestValue = getLatestMetricValue(entries, metric.key as keyof HealthEntry);
+      stats = calculateStatistics(entries, metric.key as keyof HealthEntry);
     }
 
-    const handlePress = () => {
+    const handlePress = async () => {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       console.log('Navigating to metric detail:', metric.key);
       router.push({
         pathname: '/metric-detail',
@@ -88,16 +107,23 @@ export default function HistoryScreen() {
 
         {latestValue ? (
           <View style={styles.metricContent}>
-            <Text style={[styles.metricValue, { color: theme.colors.text }]}>
-              {latestValue.value} {metric.unit}
-            </Text>
+            <View style={styles.valueContainer}>
+              <Text style={[styles.metricValue, { color: theme.colors.text }]}>
+                {latestValue.value} {metric.unit}
+              </Text>
+              {stats && (
+                <Text style={[styles.trendIndicator, { color: getTrendColor(stats.trend) }]}>
+                  {getTrendIcon(stats.trend)}
+                </Text>
+              )}
+            </View>
             <Text style={[styles.metricTimestamp, { color: theme.dark ? '#999' : '#666' }]}>
               {formatDateTime(latestValue.timestamp)}
             </Text>
           </View>
         ) : (
           <Text style={[styles.noDataText, { color: theme.dark ? '#999' : '#666' }]}>
-            No data recorded
+            No data
           </Text>
         )}
 
@@ -113,6 +139,17 @@ export default function HistoryScreen() {
     );
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView
+        style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
+        edges={['top']}
+      >
+        <LoadingSpinner message="Loading health data..." />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
@@ -124,6 +161,14 @@ export default function HistoryScreen() {
           styles.contentContainer,
           styles.contentContainerWithTabBar,
         ]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#007AFF"
+            colors={['#007AFF']}
+          />
+        }
       >
         <Text style={[styles.title, { color: theme.colors.text }]}>
           Health History
@@ -204,9 +249,18 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginRight: 8,
   },
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   metricValue: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  trendIndicator: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   metricTimestamp: {
     fontSize: 12,

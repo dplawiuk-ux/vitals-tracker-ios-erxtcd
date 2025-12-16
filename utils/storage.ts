@@ -23,6 +23,40 @@ export const saveHealthEntry = async (entry: HealthEntry): Promise<void> => {
   }
 };
 
+export const updateHealthEntry = async (entry: HealthEntry): Promise<void> => {
+  try {
+    const existingData = await AsyncStorage.getItem(STORAGE_KEY);
+    const entries: HealthEntry[] = existingData ? JSON.parse(existingData) : [];
+    
+    const index = entries.findIndex(e => e.id === entry.id);
+    if (index !== -1) {
+      entries[index] = {
+        ...entry,
+        timestamp: entry.timestamp.toISOString(),
+      };
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      console.log('Health entry updated successfully');
+    }
+  } catch (error) {
+    console.error('Error updating health entry:', error);
+    throw error;
+  }
+};
+
+export const deleteHealthEntry = async (id: string): Promise<void> => {
+  try {
+    const existingData = await AsyncStorage.getItem(STORAGE_KEY);
+    const entries: HealthEntry[] = existingData ? JSON.parse(existingData) : [];
+    
+    const filteredEntries = entries.filter(e => e.id !== id);
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(filteredEntries));
+    console.log('Health entry deleted successfully');
+  } catch (error) {
+    console.error('Error deleting health entry:', error);
+    throw error;
+  }
+};
+
 export const getHealthEntries = async (): Promise<HealthEntry[]> => {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEY);
