@@ -47,12 +47,12 @@ export default function IOSTabBar() {
         },
       ]}
     >
-      {tabs.map((tab) => {
+      {tabs.map((tab, index) => {
         const isActive = pathname.includes(`/${tab.name}`);
         
         return (
           <TouchableOpacity
-            key={tab.name}
+            key={`ios-tab-${tab.name}-${index}`}
             style={styles.tab}
             onPress={() => router.push(tab.route as any)}
           >
