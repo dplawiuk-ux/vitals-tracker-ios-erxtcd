@@ -13,6 +13,7 @@ export default function TabLayout() {
         <Icon sf="clock.fill" />
         <Label>History</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Screen key="metric-detail" name="metric-detail" options={{ href: null }} />
     </NativeTabs>
   );
 }
