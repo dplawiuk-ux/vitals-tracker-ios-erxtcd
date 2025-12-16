@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTheme } from '@react-navigation/native';
 import { saveHealthEntry } from '@/utils/storage';
@@ -18,6 +18,7 @@ import { HealthEntry } from '@/types/HealthEntry';
 
 export default function InputScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [timestamp, setTimestamp] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -85,6 +86,13 @@ export default function InputScreen() {
     }
   };
 
+  // Calculate bottom padding to account for tab bar
+  // iOS native tabs: ~50px + safe area
+  // Android floating tab bar: ~80px + margin
+  const bottomPadding = Platform.OS === 'ios' 
+    ? 50 + insets.bottom 
+    : 120;
+
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.colors.background }]}
@@ -94,8 +102,12 @@ export default function InputScreen() {
         style={styles.container}
         contentContainerStyle={[
           styles.contentContainer,
-          Platform.OS !== 'ios' && styles.contentContainerWithTabBar,
+          {
+            paddingTop: Platform.OS === 'android' ? 48 : 0,
+            paddingBottom: bottomPadding,
+          },
         ]}
+        showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.title, { color: theme.colors.text }]}>
           Personal Vitals Tracker
@@ -277,10 +289,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 20,
   },
-  contentContainerWithTabBar: {
-    paddingTop: 48,
-    paddingBottom: 100,
-  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -330,6 +338,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 8,
+    marginBottom: 20,
   },
   saveButtonText: {
     color: '#fff',
