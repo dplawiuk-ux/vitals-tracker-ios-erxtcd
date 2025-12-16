@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { PixelStethoscope } from '@/components/PixelStethoscope';
+import { PixelHeart } from '@/components/PixelHeart';
 
 export default function LoadingScreen() {
   return (
     <View style={styles.container}>
-      <PixelStethoscope size={160} color="#000000" />
+      <PixelHeart size={160} color="#000000" />
       <Text style={styles.text}>Apps by TwoBeets.com</Text>
     </View>
   );

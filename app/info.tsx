@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { PixelStethoscope } from '@/components/PixelStethoscope';
+import { PixelHeart } from '@/components/PixelHeart';
 import { IconSymbol } from '@/components/IconSymbol';
 
 export default function InfoScreen() {
@@ -31,7 +31,7 @@ export default function InfoScreen() {
         </TouchableOpacity>
 
         <View style={styles.content}>
-          <PixelStethoscope size={160} color="#000000" />
+          <PixelHeart size={160} color="#000000" />
           <Text style={styles.text}>Apps by TwoBeets.com</Text>
         </View>
       </View>

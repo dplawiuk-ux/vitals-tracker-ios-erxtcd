@@ -131,7 +131,7 @@ export default function InputScreen() {
       <TouchableOpacity 
         style={[
           styles.infoButton,
-          { top: Platform.OS === 'android' ? 48 : 8 }
+          { top: Platform.OS === 'android' ? 64 : 56 }
         ]}
         onPress={handleInfoPress}
       >
