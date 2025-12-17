@@ -1,12 +1,12 @@
 
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { PixelHeart } from '@/components/PixelHeart';
+import { ZeldaHeart } from '@/components/ZeldaHeart';
 
 export default function LoadingScreen() {
   return (
     <View style={styles.container}>
-      <PixelHeart size={160} color="#000000" />
+      <ZeldaHeart size={160} />
       <Text style={styles.text}>Apps by verysmallapps.com</Text>
     </View>
   );

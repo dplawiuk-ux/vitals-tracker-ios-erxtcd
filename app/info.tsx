@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { PixelHeart } from '@/components/PixelHeart';
+import { ZeldaHeart } from '@/components/ZeldaHeart';
 import { IconSymbol } from '@/components/IconSymbol';
 
 export default function InfoScreen() {
@@ -31,7 +31,7 @@ export default function InfoScreen() {
         </TouchableOpacity>
 
         <View style={styles.content}>
-          <PixelHeart size={160} color="#000000" />
+          <ZeldaHeart size={160} />
           <Text style={styles.text}>Apps by verysmallapps.com</Text>
         </View>
       </View>
