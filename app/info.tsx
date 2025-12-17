@@ -32,7 +32,7 @@ export default function InfoScreen() {
 
         <View style={styles.content}>
           <PixelHeart size={160} color="#000000" />
-          <Text style={styles.text}>Apps by TwoBeets.com</Text>
+          <Text style={styles.text}>Apps by verysmallapps.com</Text>
         </View>
       </View>
     </SafeAreaView>
